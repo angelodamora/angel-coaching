@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -42,10 +42,10 @@ export default function BookAppointment() {
   const loadData = async (id) => {
     try {
       setLoading(true);
-      const userData = await base44.auth.me();
+      const userData = await mindflow.auth.me();
       setUser(userData);
       
-      const coaches = await base44.entities.CoachProfile.filter({ user_id: id });
+      const coaches = await mindflow.entities.CoachProfile.filter({ user_id: id });
       if (coaches.length > 0) {
         setCoachProfile(coaches[0]);
       } else {
@@ -62,13 +62,13 @@ export default function BookAppointment() {
 
   const bookMultipleMutation = useMutation({
     mutationFn: async () => {
-      const coacheeProfiles = await base44.entities.CoacheeProfile.filter({ user_id: user.id });
+      const coacheeProfiles = await mindflow.entities.CoacheeProfile.filter({ user_id: user.id });
       const coacheeName = coacheeProfiles.length > 0 ? coacheeProfiles[0].full_name : user.full_name;
       
       const appointments = [];
       
       for (const slot of selectedSlots) {
-        const appointment = await base44.entities.Appointment.create({
+        const appointment = await mindflow.entities.Appointment.create({
           coach_id: coachId,
           coach_name: coachProfile.full_name,
           coachee_id: user.id,
@@ -82,7 +82,7 @@ export default function BookAppointment() {
           rescheduled_count: 0
         });
 
-        await base44.entities.TimeSlot.update(slot.id, {
+        await mindflow.entities.TimeSlot.update(slot.id, {
           is_available: false,
           appointment_id: appointment.id
         });

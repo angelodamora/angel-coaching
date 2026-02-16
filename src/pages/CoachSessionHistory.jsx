@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -28,13 +28,13 @@ export default function CoachSessionHistory() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
   };
 
   const { data: completedAppointments } = useQuery({
     queryKey: ['coach-completed-sessions', user?.id],
-    queryFn: () => base44.entities.Appointment.filter({ 
+    queryFn: () => mindflow.entities.Appointment.filter({ 
       coach_id: user?.id,
       status: 'completed'
     }),

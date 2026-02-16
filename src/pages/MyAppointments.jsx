@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,13 +38,13 @@ export default function MyAppointments() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
   };
 
   const { data: appointments } = useQuery({
     queryKey: ['my-appointments', user?.id],
-    queryFn: () => base44.entities.Appointment.filter({ coachee_id: user?.id }),
+    queryFn: () => mindflow.entities.Appointment.filter({ coachee_id: user?.id }),
     initialData: [],
     enabled: !!user
   });
@@ -53,17 +53,17 @@ export default function MyAppointments() {
   const cancelMutation = useMutation({
     mutationFn: async (appointment) => {
       // 1. Cancella l'appuntamento
-      await base44.entities.Appointment.update(appointment.id, { 
+      await mindflow.entities.Appointment.update(appointment.id, { 
         status: "cancelled" 
       });
 
       // 2. Libera lo slot rimettendolo disponibile
-      const slots = await base44.entities.TimeSlot.filter({ 
+      const slots = await mindflow.entities.TimeSlot.filter({ 
         appointment_id: appointment.id 
       });
       
       if (slots.length > 0) {
-        await base44.entities.TimeSlot.update(slots[0].id, {
+        await mindflow.entities.TimeSlot.update(slots[0].id, {
           is_available: true,
           appointment_id: null
         });

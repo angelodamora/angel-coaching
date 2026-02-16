@@ -1,5 +1,5 @@
 import React from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -29,19 +29,19 @@ import {
 export default function Statistics() {
   const { data: appointments } = useQuery({
     queryKey: ['all-appointments'],
-    queryFn: () => base44.entities.Appointment.list(),
+    queryFn: () => mindflow.entities.Appointment.list(),
     initialData: [],
   });
 
   const { data: coaches } = useQuery({
     queryKey: ['all-coaches'],
-    queryFn: () => base44.entities.CoachProfile.list(),
+    queryFn: () => mindflow.entities.CoachProfile.list(),
     initialData: [],
   });
 
   const { data: coachees } = useQuery({
     queryKey: ['all-coachees'],
-    queryFn: () => base44.entities.CoacheeProfile.list(),
+    queryFn: () => mindflow.entities.CoacheeProfile.list(),
     initialData: [],
   });
 

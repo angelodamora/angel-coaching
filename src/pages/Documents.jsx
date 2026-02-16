@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ export default function Documents() {
 
   const { data: documents } = useQuery({
     queryKey: ['documents'],
-    queryFn: () => base44.entities.Document.list('-created_date'),
+    queryFn: () => mindflow.entities.Document.list('-created_date'),
     initialData: [],
   });
 
@@ -46,11 +46,11 @@ export default function Documents() {
     mutationFn: async (data) => {
       let fileUrl = "";
       if (selectedFile) {
-        const uploadResult = await base44.integrations.Core.UploadFile({ file: selectedFile });
+        const uploadResult = await mindflow.integrations.Core.UploadFile({ file: selectedFile });
         fileUrl = uploadResult.file_url;
       }
       
-      await base44.entities.Document.create({
+      await mindflow.entities.Document.create({
         ...data,
         file_url: fileUrl,
         file_size: selectedFile?.size || 0,
@@ -67,7 +67,7 @@ export default function Documents() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (documentId) => base44.entities.Document.delete(documentId),
+    mutationFn: (documentId) => mindflow.entities.Document.delete(documentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents'] });
       toast.success("Documento eliminato");

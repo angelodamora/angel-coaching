@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Trash2, Shield, AlertTriangle } from "lucide-react";
@@ -26,7 +26,7 @@ export default function DataManagement() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
   };
 
@@ -41,18 +41,18 @@ export default function DataManagement() {
       let messages = [];
 
       if (userType === 'coach') {
-        const profiles = await base44.entities.CoachProfile.filter({ user_id: user.id });
+        const profiles = await mindflow.entities.CoachProfile.filter({ user_id: user.id });
         profile = profiles[0];
-        appointments = await base44.entities.Appointment.filter({ coach_id: user.id });
-        const sentMessages = await base44.entities.Message.filter({ sender_id: user.id });
-        const receivedMessages = await base44.entities.Message.filter({ receiver_id: user.id });
+        appointments = await mindflow.entities.Appointment.filter({ coach_id: user.id });
+        const sentMessages = await mindflow.entities.Message.filter({ sender_id: user.id });
+        const receivedMessages = await mindflow.entities.Message.filter({ receiver_id: user.id });
         messages = [...sentMessages, ...receivedMessages];
       } else if (userType === 'coachee') {
-        const profiles = await base44.entities.CoacheeProfile.filter({ user_id: user.id });
+        const profiles = await mindflow.entities.CoacheeProfile.filter({ user_id: user.id });
         profile = profiles[0];
-        appointments = await base44.entities.Appointment.filter({ coachee_id: user.id });
-        const sentMessages = await base44.entities.Message.filter({ sender_id: user.id });
-        const receivedMessages = await base44.entities.Message.filter({ receiver_id: user.id });
+        appointments = await mindflow.entities.Appointment.filter({ coachee_id: user.id });
+        const sentMessages = await mindflow.entities.Message.filter({ sender_id: user.id });
+        const receivedMessages = await mindflow.entities.Message.filter({ receiver_id: user.id });
         messages = [...sentMessages, ...receivedMessages];
       }
 
@@ -107,38 +107,38 @@ export default function DataManagement() {
 
       // Elimina profilo
       if (userType === 'coach') {
-        const profiles = await base44.entities.CoachProfile.filter({ user_id: user.id });
+        const profiles = await mindflow.entities.CoachProfile.filter({ user_id: user.id });
         for (const profile of profiles) {
-          await base44.entities.CoachProfile.delete(profile.id);
+          await mindflow.entities.CoachProfile.delete(profile.id);
         }
         
         // Elimina slot
-        const slots = await base44.entities.TimeSlot.filter({ coach_id: user.id });
+        const slots = await mindflow.entities.TimeSlot.filter({ coach_id: user.id });
         for (const slot of slots) {
-          await base44.entities.TimeSlot.delete(slot.id);
+          await mindflow.entities.TimeSlot.delete(slot.id);
         }
 
         // Elimina agreements
-        const agreements = await base44.entities.CoachingAgreement.filter({ coach_id: user.id });
+        const agreements = await mindflow.entities.CoachingAgreement.filter({ coach_id: user.id });
         for (const agreement of agreements) {
-          await base44.entities.CoachingAgreement.delete(agreement.id);
+          await mindflow.entities.CoachingAgreement.delete(agreement.id);
         }
       } else if (userType === 'coachee') {
-        const profiles = await base44.entities.CoacheeProfile.filter({ user_id: user.id });
+        const profiles = await mindflow.entities.CoacheeProfile.filter({ user_id: user.id });
         for (const profile of profiles) {
-          await base44.entities.CoacheeProfile.delete(profile.id);
+          await mindflow.entities.CoacheeProfile.delete(profile.id);
         }
       }
 
       // Elimina messaggi
-      const sentMessages = await base44.entities.Message.filter({ sender_id: user.id });
+      const sentMessages = await mindflow.entities.Message.filter({ sender_id: user.id });
       for (const msg of sentMessages) {
-        await base44.entities.Message.delete(msg.id);
+        await mindflow.entities.Message.delete(msg.id);
       }
       
-      const receivedMessages = await base44.entities.Message.filter({ receiver_id: user.id });
+      const receivedMessages = await mindflow.entities.Message.filter({ receiver_id: user.id });
       for (const msg of receivedMessages) {
-        await base44.entities.Message.delete(msg.id);
+        await mindflow.entities.Message.delete(msg.id);
       }
 
       // Cancella consenso cookie
@@ -147,7 +147,7 @@ export default function DataManagement() {
       toast.success("Account eliminato. Verrai disconnesso...");
       
       setTimeout(() => {
-        base44.auth.logout();
+        mindflow.auth.logout();
       }, 2000);
       
     } catch (error) {

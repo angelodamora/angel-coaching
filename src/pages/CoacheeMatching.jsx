@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -52,7 +52,7 @@ export default function CoacheeMatching() {
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
-      const profile = await base44.entities.CoacheeMatchingProfile.create({
+      const profile = await mindflow.entities.CoacheeMatchingProfile.create({
         ...data,
         status: "completed"
       });
@@ -63,7 +63,7 @@ export default function CoacheeMatching() {
   const registerMutation = useMutation({
     mutationFn: async (data) => {
       // Crea il profilo coachee
-      await base44.entities.CoacheeProfile.create({
+      await mindflow.entities.CoacheeProfile.create({
         user_id: data.user_id,
         full_name: `${data.first_name} ${data.last_name}`,
         goals: [focusAreas.find(f => f.value === data.focus_area)?.label],
@@ -71,7 +71,7 @@ export default function CoacheeMatching() {
       });
 
       // Aggiorna lo stato del matching profile
-      await base44.entities.CoacheeMatchingProfile.update(data.profile_id, {
+      await mindflow.entities.CoacheeMatchingProfile.update(data.profile_id, {
         status: "registered"
       });
     },
@@ -123,7 +123,7 @@ export default function CoacheeMatching() {
         matching_profile_id: profile.id
       });
       
-      base44.auth.redirectToLogin(createPageUrl("CoachList") + `?${params.toString()}`);
+      mindflow.auth.redirectToLogin(createPageUrl("CoachList") + `?${params.toString()}`);
     } catch (error) {
       console.error(error);
       toast.error("Errore durante la registrazione");

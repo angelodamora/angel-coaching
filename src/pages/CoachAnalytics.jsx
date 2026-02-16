@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,14 +17,14 @@ export default function CoachAnalytics() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
   };
 
   const { data: coachProfile } = useQuery({
     queryKey: ['coach-profile', user?.id],
     queryFn: async () => {
-      const profiles = await base44.entities.CoachProfile.filter({ user_id: user?.id });
+      const profiles = await mindflow.entities.CoachProfile.filter({ user_id: user?.id });
       return profiles[0];
     },
     enabled: !!user
@@ -32,7 +32,7 @@ export default function CoachAnalytics() {
 
   const { data: allAppointments } = useQuery({
     queryKey: ['coach-analytics-appointments', user?.id],
-    queryFn: () => base44.entities.Appointment.filter({ coach_id: user?.id }),
+    queryFn: () => mindflow.entities.Appointment.filter({ coach_id: user?.id }),
     initialData: [],
     enabled: !!user
   });
@@ -40,8 +40,8 @@ export default function CoachAnalytics() {
   const { data: allMessages } = useQuery({
     queryKey: ['coach-analytics-messages', user?.id],
     queryFn: async () => {
-      const sent = await base44.entities.Message.filter({ sender_id: user?.id });
-      const received = await base44.entities.Message.filter({ receiver_id: user?.id });
+      const sent = await mindflow.entities.Message.filter({ sender_id: user?.id });
+      const received = await mindflow.entities.Message.filter({ receiver_id: user?.id });
       return [...sent, ...received];
     },
     initialData: [],

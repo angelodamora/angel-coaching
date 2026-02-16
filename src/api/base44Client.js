@@ -1,8 +1,6 @@
-import { createClient } from '@base44/sdk';
-// import { getAccessToken } from '@base44/sdk/utils/auth-utils';
+// Retrocompatibilità: re-export da mindflowClient
+// Questo file mantiene la compatibilità con il codice esistente che usa base44
+import { mindflow, base44 } from './mindflowClient';
 
-// Create a client with authentication required
-export const base44 = createClient({
-  appId: "68f8ea6151e7f9d5ce21bc30", 
-  requiresAuth: true // Ensure authentication is required for all operations
-});
+export { mindflow, base44 };
+export default mindflow;

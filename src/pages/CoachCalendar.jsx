@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -50,13 +50,13 @@ export default function CoachCalendar() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
   };
 
   const { data: timeSlots } = useQuery({
     queryKey: ['time-slots', user?.id, selectedDate],
-    queryFn: () => base44.entities.TimeSlot.filter({ 
+    queryFn: () => mindflow.entities.TimeSlot.filter({ 
       coach_id: user?.id,
       date: selectedDate 
     }),
@@ -66,7 +66,7 @@ export default function CoachCalendar() {
 
   const { data: appointments } = useQuery({
     queryKey: ['appointments', user?.id, selectedDate],
-    queryFn: () => base44.entities.Appointment.filter({ 
+    queryFn: () => mindflow.entities.Appointment.filter({ 
       coach_id: user?.id,
       date: selectedDate 
     }),
@@ -77,7 +77,7 @@ export default function CoachCalendar() {
   const createSlotMutation = useMutation({
     mutationFn: async (slotData) => {
       const endTime = calculateEndTime(slotData.start_time, slotData.duration_minutes);
-      await base44.entities.TimeSlot.create({
+      await mindflow.entities.TimeSlot.create({
         coach_id: user.id,
         date: selectedDate,
         start_time: slotData.start_time,
@@ -126,7 +126,7 @@ export default function CoachCalendar() {
         }
       }
 
-      await base44.entities.TimeSlot.bulkCreate(slots);
+      await mindflow.entities.TimeSlot.bulkCreate(slots);
       return slots.length;
     },
     onSuccess: (count) => {
@@ -146,7 +146,7 @@ export default function CoachCalendar() {
   });
 
   const deleteSlotMutation = useMutation({
-    mutationFn: (slotId) => base44.entities.TimeSlot.delete(slotId),
+    mutationFn: (slotId) => mindflow.entities.TimeSlot.delete(slotId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['time-slots'] });
       toast.success("Slot eliminato");

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -55,20 +55,20 @@ export default function CoachAppointments() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
   };
 
   const { data: appointments } = useQuery({
     queryKey: ['coach-appointments', user?.id],
-    queryFn: () => base44.entities.Appointment.filter({ coach_id: user?.id }),
+    queryFn: () => mindflow.entities.Appointment.filter({ coach_id: user?.id }),
     initialData: [],
     enabled: !!user
   });
 
   const confirmMutation = useMutation({
     mutationFn: async (appointmentId) => {
-      await base44.entities.Appointment.update(appointmentId, {
+      await mindflow.entities.Appointment.update(appointmentId, {
         status: "confirmed"
       });
     },
@@ -94,7 +94,7 @@ ${notes.recommendations}
 ${notes.next_steps}
       `.trim();
 
-      await base44.entities.Appointment.update(appointmentId, {
+      await mindflow.entities.Appointment.update(appointmentId, {
         status: "completed",
         session_notes: formattedNotes
       });
@@ -115,17 +115,17 @@ ${notes.next_steps}
   const cancelMutation = useMutation({
     mutationFn: async (appointment) => {
       // 1. Cancella l'appuntamento
-      await base44.entities.Appointment.update(appointment.id, {
+      await mindflow.entities.Appointment.update(appointment.id, {
         status: "cancelled"
       });
 
       // 2. Libera lo slot rimettendolo disponibile
-      const slots = await base44.entities.TimeSlot.filter({
+      const slots = await mindflow.entities.TimeSlot.filter({
         appointment_id: appointment.id
       });
 
       if (slots.length > 0) {
-        await base44.entities.TimeSlot.update(slots[0].id, {
+        await mindflow.entities.TimeSlot.update(slots[0].id, {
           is_available: true,
           appointment_id: null
         });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,13 +43,13 @@ export default function AdminCoachSchedules() {
 
   const { data: coaches } = useQuery({
     queryKey: ['approved-coaches'],
-    queryFn: () => base44.entities.CoachProfile.filter({ status: 'approved' }),
+    queryFn: () => mindflow.entities.CoachProfile.filter({ status: 'approved' }),
     initialData: [],
   });
 
   const { data: timeSlots } = useQuery({
     queryKey: ['coach-time-slots', selectedCoach, selectedDate],
-    queryFn: () => base44.entities.TimeSlot.filter({ 
+    queryFn: () => mindflow.entities.TimeSlot.filter({ 
       coach_id: selectedCoach,
       date: selectedDate 
     }),
@@ -59,7 +59,7 @@ export default function AdminCoachSchedules() {
 
   const { data: appointments } = useQuery({
     queryKey: ['coach-appointments-admin', selectedCoach, selectedDate],
-    queryFn: () => base44.entities.Appointment.filter({ 
+    queryFn: () => mindflow.entities.Appointment.filter({ 
       coach_id: selectedCoach,
       date: selectedDate 
     }),
@@ -70,7 +70,7 @@ export default function AdminCoachSchedules() {
   const createSlotMutation = useMutation({
     mutationFn: async (slotData) => {
       const endTime = calculateEndTime(slotData.start_time, slotData.duration_minutes);
-      await base44.entities.TimeSlot.create({
+      await mindflow.entities.TimeSlot.create({
         coach_id: selectedCoach,
         date: selectedDate,
         start_time: slotData.start_time,
@@ -90,7 +90,7 @@ export default function AdminCoachSchedules() {
   const updateSlotMutation = useMutation({
     mutationFn: async ({ slotId, slotData }) => {
       const endTime = calculateEndTime(slotData.start_time, slotData.duration_minutes);
-      await base44.entities.TimeSlot.update(slotId, {
+      await mindflow.entities.TimeSlot.update(slotId, {
         start_time: slotData.start_time,
         end_time: endTime,
         duration_minutes: slotData.duration_minutes
@@ -104,7 +104,7 @@ export default function AdminCoachSchedules() {
   });
 
   const deleteSlotMutation = useMutation({
-    mutationFn: (slotId) => base44.entities.TimeSlot.delete(slotId),
+    mutationFn: (slotId) => mindflow.entities.TimeSlot.delete(slotId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coach-time-slots'] });
       toast.success("Slot eliminato");
@@ -477,7 +477,7 @@ function WeekSummary({ coachId, currentDate, onDateSelect }) {
     queryFn: async () => {
       const allSlots = await Promise.all(
         weekDates.map(date => 
-          base44.entities.TimeSlot.filter({ coach_id: coachId, date })
+          mindflow.entities.TimeSlot.filter({ coach_id: coachId, date })
         )
       );
       return allSlots;

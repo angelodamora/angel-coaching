@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ export default function CoachAvailabilityCalendar({ coachId, onDateSelect, onSlo
       const endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
       
       // Ottieni tutti gli slot del mese
-      const allSlots = await base44.entities.TimeSlot.filter({ 
+      const allSlots = await mindflow.entities.TimeSlot.filter({ 
         coach_id: coachId,
         is_available: true
       });
@@ -48,7 +48,7 @@ export default function CoachAvailabilityCalendar({ coachId, onDateSelect, onSlo
   const { data: daySlots, isLoading: loadingSlots } = useQuery({
     queryKey: ['day-slots', coachId, selectedDate],
     queryFn: async () => {
-      const slots = await base44.entities.TimeSlot.filter({ 
+      const slots = await mindflow.entities.TimeSlot.filter({ 
         coach_id: coachId,
         date: selectedDate,
         is_available: true

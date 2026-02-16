@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,13 +38,13 @@ export default function RegistrationRequests() {
 
   const { data: coaches } = useQuery({
     queryKey: ['coach-requests'],
-    queryFn: () => base44.entities.CoachProfile.filter({ status: 'pending' }),
+    queryFn: () => mindflow.entities.CoachProfile.filter({ status: 'pending' }),
     initialData: [],
   });
 
   const { data: coachees } = useQuery({
     queryKey: ['coachee-requests'],
-    queryFn: () => base44.entities.CoacheeProfile.filter({ status: 'pending' }),
+    queryFn: () => mindflow.entities.CoacheeProfile.filter({ status: 'pending' }),
     initialData: [],
   });
 
@@ -76,8 +76,8 @@ Il Team di Angel Coaching`;
 
   const approveCoachMutation = useMutation({
     mutationFn: async ({ coach, subject, body }) => {
-      await base44.entities.CoachProfile.update(coach.id, { status: 'approved' });
-      await base44.entities.User.update(coach.user_id, { 
+      await mindflow.entities.CoachProfile.update(coach.id, { status: 'approved' });
+      await mindflow.entities.User.update(coach.user_id, { 
         registration_status: 'approved',
         user_type: 'coach'
       });
@@ -98,7 +98,7 @@ Il Team di Angel Coaching`;
           return `<p>${line}</p>`;
         }).join('');
 
-        await base44.integrations.Core.SendEmail({
+        await mindflow.integrations.Core.SendEmail({
           to: coach.email,
           subject: subject,
           body: `
@@ -123,10 +123,10 @@ Il Team di Angel Coaching`;
 
   const rejectCoachMutation = useMutation({
     mutationFn: async (id) => {
-      await base44.entities.CoachProfile.update(id, { status: 'rejected' });
+      await mindflow.entities.CoachProfile.update(id, { status: 'rejected' });
       const coach = coaches.find(c => c.id === id);
       if (coach) {
-        await base44.entities.User.update(coach.user_id, { 
+        await mindflow.entities.User.update(coach.user_id, { 
           registration_status: 'rejected'
         });
       }
@@ -139,10 +139,10 @@ Il Team di Angel Coaching`;
 
   const approveCoacheeMutation = useMutation({
     mutationFn: async (id) => {
-      await base44.entities.CoacheeProfile.update(id, { status: 'approved' });
+      await mindflow.entities.CoacheeProfile.update(id, { status: 'approved' });
       const coachee = coachees.find(c => c.id === id);
       if (coachee) {
-        await base44.entities.User.update(coachee.user_id, { 
+        await mindflow.entities.User.update(coachee.user_id, { 
           registration_status: 'approved',
           user_type: 'coachee'
         });
@@ -156,10 +156,10 @@ Il Team di Angel Coaching`;
 
   const rejectCoacheeMutation = useMutation({
     mutationFn: async (id) => {
-      await base44.entities.CoacheeProfile.update(id, { status: 'rejected' });
+      await mindflow.entities.CoacheeProfile.update(id, { status: 'rejected' });
       const coachee = coachees.find(c => c.id === id);
       if (coachee) {
-        await base44.entities.User.update(coachee.user_id, { 
+        await mindflow.entities.User.update(coachee.user_id, { 
           registration_status: 'rejected'
         });
       }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,15 +25,15 @@ export default function CoacheeMessages() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
   };
 
   const { data: allMessages } = useQuery({
     queryKey: ['coachee-messages', user?.id],
     queryFn: async () => {
-      const sent = await base44.entities.Message.filter({ sender_id: user?.id });
-      const received = await base44.entities.Message.filter({ receiver_id: user?.id });
+      const sent = await mindflow.entities.Message.filter({ sender_id: user?.id });
+      const received = await mindflow.entities.Message.filter({ receiver_id: user?.id });
       return [...sent, ...received].sort((a, b) => 
         new Date(b.created_date) - new Date(a.created_date)
       );
@@ -88,7 +88,7 @@ export default function CoacheeMessages() {
 
   const sendMessageMutation = useMutation({
     mutationFn: async (messageData) => {
-      await base44.entities.Message.create(messageData);
+      await mindflow.entities.Message.create(messageData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coachee-messages'] });
@@ -130,7 +130,7 @@ export default function CoacheeMessages() {
   const markAsReadMutation = useMutation({
     mutationFn: async (messageIds) => {
       await Promise.all(messageIds.map(id => 
-        base44.entities.Message.update(id, { is_read: true })
+        mindflow.entities.Message.update(id, { is_read: true })
       ));
     },
     onSuccess: () => {

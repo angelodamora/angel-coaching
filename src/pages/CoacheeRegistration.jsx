@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -25,15 +25,15 @@ export default function CoacheeRegistration() {
 
   const registerMutation = useMutation({
     mutationFn: async (data) => {
-      const user = await base44.auth.me();
+      const user = await mindflow.auth.me();
       
-      await base44.entities.CoacheeProfile.create({
+      await mindflow.entities.CoacheeProfile.create({
         user_id: user.id,
         ...data,
         status: "pending"
       });
 
-      await base44.auth.updateMe({
+      await mindflow.auth.updateMe({
         user_type: "coachee",
         registration_status: "pending",
         phone: data.phone

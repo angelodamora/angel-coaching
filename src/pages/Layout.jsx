@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { createPageUrl } from "@/utils";
 import {
   LayoutDashboard,
@@ -53,7 +53,7 @@ export default function Layout({ children, currentPageName }) {
 
   const loadUser = async () => {
     try {
-      const userData = await base44.auth.me();
+      const userData = await mindflow.auth.me();
       setUser(userData);
       
       // Carica il ruolo salvato dall'admin
@@ -76,8 +76,8 @@ export default function Layout({ children, currentPageName }) {
 
   const loadUnreadMessages = async () => {
     try {
-      const userData = await base44.auth.me();
-      const messages = await base44.entities.Message.filter({
+      const userData = await mindflow.auth.me();
+      const messages = await mindflow.entities.Message.filter({
         receiver_id: userData.id,
         is_read: false
       });
@@ -90,7 +90,7 @@ export default function Layout({ children, currentPageName }) {
   const handleLogout = () => {
     localStorage.removeItem('admin_active_role');
     localStorage.removeItem('admin_impersonate_user');
-    base44.auth.logout();
+    mindflow.auth.logout();
   };
 
   const handleRoleChange = (newRole) => {

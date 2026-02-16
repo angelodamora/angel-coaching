@@ -1,25 +1,26 @@
-import { base44 } from './base44Client';
+import { mindflow } from './mindflowClient';
 
 
-export const CoachProfile = base44.entities.CoachProfile;
+export const CoachProfile = mindflow.entities.CoachProfile;
 
-export const CoacheeProfile = base44.entities.CoacheeProfile;
+export const CoacheeProfile = mindflow.entities.CoacheeProfile;
 
-export const TimeSlot = base44.entities.TimeSlot;
+export const TimeSlot = mindflow.entities.TimeSlot;
 
-export const Appointment = base44.entities.Appointment;
+export const Appointment = mindflow.entities.Appointment;
 
-export const Message = base44.entities.Message;
+export const Message = mindflow.entities.Message;
 
-export const Document = base44.entities.Document;
+export const Document = mindflow.entities.Document;
 
-export const CoachingAgreement = base44.entities.CoachingAgreement;
+export const CoachingAgreement = mindflow.entities.CoachingAgreement;
 
-export const CoacheeAgreement = base44.entities.CoacheeAgreement;
+export const CoacheeAgreement = mindflow.entities.CoacheeAgreement;
 
-export const CoacheeMatchingProfile = base44.entities.CoacheeMatchingProfile;
+export const CoacheeMatchingProfile = mindflow.entities.CoacheeMatchingProfile;
 
 
 
 // auth sdk:
-export const User = base44.auth;
+export const User = mindflow.entities.User;
+export const Auth = mindflow.auth;

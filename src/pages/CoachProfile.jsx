@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,14 +57,14 @@ export default function CoachProfile() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
   };
 
   const { data: coachProfile } = useQuery({
     queryKey: ['coach-profile', user?.id],
     queryFn: async () => {
-      const profiles = await base44.entities.CoachProfile.filter({ user_id: user?.id });
+      const profiles = await mindflow.entities.CoachProfile.filter({ user_id: user?.id });
       return profiles[0];
     },
     enabled: !!user
@@ -72,7 +72,7 @@ export default function CoachProfile() {
 
   const { data: coachingAgreements } = useQuery({
     queryKey: ['coaching-agreements', user?.id],
-    queryFn: () => base44.entities.CoachingAgreement.filter({ coach_id: user?.id }),
+    queryFn: () => mindflow.entities.CoachingAgreement.filter({ coach_id: user?.id }),
     initialData: [],
     enabled: !!user
   });
@@ -80,7 +80,7 @@ export default function CoachProfile() {
   const { data: myCoachees } = useQuery({
     queryKey: ['my-coachees', user?.id],
     queryFn: async () => {
-      const appointments = await base44.entities.Appointment.filter({ coach_id: user?.id });
+      const appointments = await mindflow.entities.Appointment.filter({ coach_id: user?.id });
       const coacheeMap = {};
       
       appointments.forEach(apt => {
@@ -115,7 +115,7 @@ export default function CoachProfile() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data) => {
-      await base44.entities.CoachProfile.update(coachProfile.id, data);
+      await mindflow.entities.CoachProfile.update(coachProfile.id, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coach-profile'] });
@@ -126,7 +126,7 @@ export default function CoachProfile() {
 
   const togglePublishMutation = useMutation({
     mutationFn: async () => {
-      await base44.entities.CoachProfile.update(coachProfile.id, {
+      await mindflow.entities.CoachProfile.update(coachProfile.id, {
         is_published: !coachProfile.is_published
       });
     },
@@ -138,7 +138,7 @@ export default function CoachProfile() {
 
   const createAgreementMutation = useMutation({
     mutationFn: async (data) => {
-      await base44.entities.CoachingAgreement.create({
+      await mindflow.entities.CoachingAgreement.create({
         ...data,
         coach_id: user.id
       });
@@ -158,7 +158,7 @@ export default function CoachProfile() {
 
   const updateAgreementMutation = useMutation({
     mutationFn: async ({ id, data }) => {
-      await base44.entities.CoachingAgreement.update(id, data);
+      await mindflow.entities.CoachingAgreement.update(id, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coaching-agreements'] });
@@ -169,7 +169,7 @@ export default function CoachProfile() {
 
   const deleteAgreementMutation = useMutation({
     mutationFn: async (id) => {
-      await base44.entities.CoachingAgreement.delete(id);
+      await mindflow.entities.CoachingAgreement.delete(id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coaching-agreements'] });
@@ -179,7 +179,7 @@ export default function CoachProfile() {
 
   const toggleAgreementStatus = async (agreement) => {
     try {
-      await base44.entities.CoachingAgreement.update(agreement.id, {
+      await mindflow.entities.CoachingAgreement.update(agreement.id, {
         status: agreement.status === 'active' ? 'inactive' : 'active'
       });
       queryClient.invalidateQueries({ queryKey: ['coaching-agreements'] });
@@ -244,7 +244,7 @@ ${aiInput}
 
 Genera la biografia:`;
 
-      const result = await base44.integrations.Core.InvokeLLM({
+      const result = await mindflow.integrations.Core.InvokeLLM({
         prompt: prompt
       });
 

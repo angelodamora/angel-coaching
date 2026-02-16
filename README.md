@@ -1,8 +1,7 @@
-# Base44 App
+# Angel Coaching App
 
-
-This app was created automatically by Base44.
-It's a Vite+React app that communicates with the Base44 API.
+This app uses the MindFlow SDK to communicate with the MindFlow Backend API.
+It's a Vite+React app built for coaching management.
 
 ## Running the app
 

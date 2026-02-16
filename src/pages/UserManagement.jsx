@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,19 +36,19 @@ export default function UserManagement() {
 
   const { data: users } = useQuery({
     queryKey: ['all-users'],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: () => mindflow.entities.User.list(),
     initialData: [],
   });
 
   const { data: coachProfiles } = useQuery({
     queryKey: ['all-coach-profiles'],
-    queryFn: () => base44.entities.CoachProfile.list(),
+    queryFn: () => mindflow.entities.CoachProfile.list(),
     initialData: [],
   });
 
   const { data: coacheeProfiles } = useQuery({
     queryKey: ['all-coachee-profiles'],
-    queryFn: () => base44.entities.CoacheeProfile.list(),
+    queryFn: () => mindflow.entities.CoacheeProfile.list(),
     initialData: [],
   });
 
@@ -75,7 +75,7 @@ export default function UserManagement() {
 
   const updateUserMutation = useMutation({
     mutationFn: async ({ userId, userData }) => {
-      await base44.entities.User.update(userId, userData);
+      await mindflow.entities.User.update(userId, userData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-users'] });
@@ -85,7 +85,7 @@ export default function UserManagement() {
 
   const updateCoachProfileMutation = useMutation({
     mutationFn: async ({ profileId, profileData }) => {
-      await base44.entities.CoachProfile.update(profileId, profileData);
+      await mindflow.entities.CoachProfile.update(profileId, profileData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-coach-profiles'] });
@@ -95,7 +95,7 @@ export default function UserManagement() {
 
   const updateCoacheeProfileMutation = useMutation({
     mutationFn: async ({ profileId, profileData }) => {
-      await base44.entities.CoacheeProfile.update(profileId, profileData);
+      await mindflow.entities.CoacheeProfile.update(profileId, profileData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-coachee-profiles'] });

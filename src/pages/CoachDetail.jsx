@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -38,7 +38,7 @@ export default function CoachDetail() {
   const { data: coach, isLoading } = useQuery({
     queryKey: ['coach', coachId],
     queryFn: async () => {
-      const coaches = await base44.entities.CoachProfile.filter({ id: coachId });
+      const coaches = await mindflow.entities.CoachProfile.filter({ id: coachId });
       return coaches[0];
     },
     enabled: !!coachId,

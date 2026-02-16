@@ -1,0 +1,17 @@
+{
+  "name": "@mindflow/sdk",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MindFlow client SDK (HTTP + entities + integrations) with appId injection.",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "keywords": [
+    "mindflow",
+    "sdk",
+    "client"
+  ],
+  "author": "",
+  "license": "MIT"
+}

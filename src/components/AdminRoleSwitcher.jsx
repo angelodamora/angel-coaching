@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery } from "@tanstack/react-query";
 import {
   Select,
@@ -26,7 +26,7 @@ export default function AdminRoleSwitcher({ onRoleChange, currentRole, onUserCha
   const { data: coaches } = useQuery({
     queryKey: ['coaches-list'],
     queryFn: async () => {
-      const profiles = await base44.entities.CoachProfile.filter({ status: 'approved' });
+      const profiles = await mindflow.entities.CoachProfile.filter({ status: 'approved' });
       return profiles;
     },
     initialData: [],
@@ -36,7 +36,7 @@ export default function AdminRoleSwitcher({ onRoleChange, currentRole, onUserCha
   const { data: coachees } = useQuery({
     queryKey: ['coachees-list'],
     queryFn: async () => {
-      const profiles = await base44.entities.CoacheeProfile.filter({ status: 'approved' });
+      const profiles = await mindflow.entities.CoacheeProfile.filter({ status: 'approved' });
       return profiles;
     },
     initialData: [],

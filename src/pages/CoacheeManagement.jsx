@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,27 +42,27 @@ export default function CoacheeManagement() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
   };
 
   const { data: appointments } = useQuery({
     queryKey: ['coach-all-appointments', user?.id],
-    queryFn: () => base44.entities.Appointment.filter({ coach_id: user?.id }),
+    queryFn: () => mindflow.entities.Appointment.filter({ coach_id: user?.id }),
     initialData: [],
     enabled: !!user
   });
 
   const { data: agreements } = useQuery({
     queryKey: ['all-agreements', user?.id],
-    queryFn: () => base44.entities.CoachingAgreement.filter({ coach_id: user?.id }),
+    queryFn: () => mindflow.entities.CoachingAgreement.filter({ coach_id: user?.id }),
     initialData: [],
     enabled: !!user
   });
 
   const { data: coacheeAgreements } = useQuery({
     queryKey: ['coachee-agreements', user?.id],
-    queryFn: () => base44.entities.CoacheeAgreement.filter({ coach_id: user?.id }),
+    queryFn: () => mindflow.entities.CoacheeAgreement.filter({ coach_id: user?.id }),
     initialData: [],
     enabled: !!user
   });
@@ -71,12 +71,12 @@ export default function CoacheeManagement() {
     mutationFn: async ({ coacheeId, coacheeName, agreementId }) => {
       const existingAssignments = coacheeAgreements.filter(ca => ca.coachee_id === coacheeId);
       for (const assignment of existingAssignments) {
-        await base44.entities.CoacheeAgreement.delete(assignment.id);
+        await mindflow.entities.CoacheeAgreement.delete(assignment.id);
       }
       
       if (agreementId && agreementId !== "none") {
         const selectedAgreement = agreements.find(a => a.id === agreementId);
-        await base44.entities.CoacheeAgreement.create({
+        await mindflow.entities.CoacheeAgreement.create({
           coach_id: user.id,
           coachee_id: coacheeId,
           coachee_name: coacheeName,
@@ -94,7 +94,7 @@ export default function CoacheeManagement() {
 
   const updateCoachingStatusMutation = useMutation({
     mutationFn: async ({ coacheeAgreementId, status }) => {
-      await base44.entities.CoacheeAgreement.update(coacheeAgreementId, { 
+      await mindflow.entities.CoacheeAgreement.update(coacheeAgreementId, { 
         coaching_status: status
       });
     },
@@ -106,7 +106,7 @@ export default function CoacheeManagement() {
 
   const updateAppointmentMutation = useMutation({
     mutationFn: async ({ id, data }) => {
-      await base44.entities.Appointment.update(id, data);
+      await mindflow.entities.Appointment.update(id, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coach-all-appointments'] });

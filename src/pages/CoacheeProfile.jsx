@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,14 +29,14 @@ export default function CoacheeProfile() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
   };
 
   const { data: coacheeProfile } = useQuery({
     queryKey: ['coachee-profile', user?.id],
     queryFn: async () => {
-      const profiles = await base44.entities.CoacheeProfile.filter({ user_id: user?.id });
+      const profiles = await mindflow.entities.CoacheeProfile.filter({ user_id: user?.id });
       return profiles[0];
     },
     enabled: !!user
@@ -55,7 +55,7 @@ export default function CoacheeProfile() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data) => {
-      await base44.entities.CoacheeProfile.update(coacheeProfile.id, data);
+      await mindflow.entities.CoacheeProfile.update(coacheeProfile.id, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coachee-profile'] });

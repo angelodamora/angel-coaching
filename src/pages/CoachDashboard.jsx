@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,10 +27,10 @@ export default function CoachDashboard() {
   }, []);
 
   const loadData = async () => {
-    const userData = await base44.auth.me();
+    const userData = await mindflow.auth.me();
     setUser(userData);
 
-    const profiles = await base44.entities.CoachProfile.filter({ user_id: userData.id });
+    const profiles = await mindflow.entities.CoachProfile.filter({ user_id: userData.id });
     if (profiles.length > 0) {
       setCoachProfile(profiles[0]);
     }
@@ -38,14 +38,14 @@ export default function CoachDashboard() {
 
   const { data: appointments } = useQuery({
     queryKey: ['coach-appointments', user?.id],
-    queryFn: () => base44.entities.Appointment.filter({ coach_id: user?.id }),
+    queryFn: () => mindflow.entities.Appointment.filter({ coach_id: user?.id }),
     initialData: [],
     enabled: !!user
   });
 
   const { data: messages } = useQuery({
     queryKey: ['coach-messages', user?.id],
-    queryFn: () => base44.entities.Message.filter({ receiver_id: user?.id, is_read: false }),
+    queryFn: () => mindflow.entities.Message.filter({ receiver_id: user?.id, is_read: false }),
     initialData: [],
     enabled: !!user
   });

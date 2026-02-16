@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,13 +12,13 @@ export default function AdminCalendar() {
 
   const { data: appointments } = useQuery({
     queryKey: ['admin-appointments', selectedDate],
-    queryFn: () => base44.entities.Appointment.filter({ date: selectedDate }),
+    queryFn: () => mindflow.entities.Appointment.filter({ date: selectedDate }),
     initialData: [],
   });
 
   const { data: coaches } = useQuery({
     queryKey: ['coaches'],
-    queryFn: () => base44.entities.CoachProfile.list(),
+    queryFn: () => mindflow.entities.CoachProfile.list(),
     initialData: [],
   });
 

@@ -38,6 +38,8 @@ import CoacheeProfile from "./CoacheeProfile";
 
 import CoacheeRegistration from "./CoacheeRegistration";
 
+import Dashboard from "./Dashboard";
+
 import DataManagement from "./DataManagement";
 
 import Documents from "./Documents";
@@ -97,6 +99,8 @@ const PAGES = {
     CoacheeProfile: CoacheeProfile,
     
     CoacheeRegistration: CoacheeRegistration,
+    
+    Dashboard: Dashboard,
     
     DataManagement: DataManagement,
     
@@ -180,6 +184,8 @@ function PagesContent() {
                 <Route path="/CoacheeProfile" element={<CoacheeProfile />} />
                 
                 <Route path="/CoacheeRegistration" element={<CoacheeRegistration />} />
+                
+                <Route path="/Dashboard" element={<Dashboard />} />
                 
                 <Route path="/DataManagement" element={<DataManagement />} />
                 

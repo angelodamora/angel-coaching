@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { mindflow } from "@/api/mindflowClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,7 +24,7 @@ import {
   Line
 } from "recharts";
 
-export default function AdminDashboard() {
+export default function Dashboard() {
   const { data: coaches } = useQuery({
     queryKey: ['coaches'],
     queryFn: () => mindflow.entities.CoachProfile.list(),
@@ -42,6 +42,29 @@ export default function AdminDashboard() {
     queryFn: () => mindflow.entities.Appointment.list(),
     initialData: [],
   });
+
+  // Calculate total distance - ensure it's always a number
+  const totalDistance = useMemo(() => {
+    if (!appointments || !Array.isArray(appointments)) {
+      return 0;
+    }
+    
+    const calculated = appointments.reduce((sum, apt) => {
+      // Extract distance or duration from appointment
+      const distance = apt?.distance ?? apt?.duration ?? 0;
+      const numValue = Number(distance);
+      return sum + (isNaN(numValue) ? 0 : numValue);
+    }, 0);
+    
+    // Ensure it's always a valid number
+    return isNaN(calculated) ? 0 : calculated;
+  }, [appointments]);
+
+  // Format distance with proper number validation
+  const formattedDistance = useMemo(() => {
+    const num = Number(totalDistance);
+    return isNaN(num) ? '0.00' : num.toFixed(2);
+  }, [totalDistance]);
 
   const stats = [
     {
@@ -66,11 +89,11 @@ export default function AdminDashboard() {
       change: "+12%"
     },
     {
-      title: "Appuntamenti Confermati",
-      value: appointments.filter(a => a.status === 'confirmed').length,
-      icon: CheckCircle2,
+      title: "Distanza Totale",
+      value: formattedDistance,
+      icon: TrendingUp,
       color: "from-indigo-500 to-indigo-600",
-      percentage: `${Math.round((appointments.filter(a => a.status === 'confirmed').length / appointments.length) * 100) || 0}%`
+      unit: "km"
     }
   ];
 
@@ -83,7 +106,7 @@ export default function AdminDashboard() {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Dashboard Admin
+            Dashboard
           </h1>
           <p className="text-gray-600">Panoramica generale della piattaforma</p>
         </motion.div>
@@ -109,7 +132,7 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold text-gray-900 mb-1">
-                    {stat.value}
+                    {stat.value} {stat.unit || ''}
                   </div>
                   {stat.pending > 0 && (
                     <div className="text-sm text-orange-600 font-medium">
@@ -119,11 +142,6 @@ export default function AdminDashboard() {
                   {stat.change && (
                     <div className="text-sm text-green-600 font-medium">
                       {stat.change} questo mese
-                    </div>
-                  )}
-                  {stat.percentage && (
-                    <div className="text-sm text-indigo-600 font-medium">
-                      {stat.percentage} confermati
                     </div>
                   )}
                 </CardContent>

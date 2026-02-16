@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from "@/api/base44Client";
+import { mindflow } from "@/api/mindflowClient";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -33,10 +33,10 @@ export default function LandingPage() {
 
   const checkAuth = async () => {
     try {
-      const authenticated = await base44.auth.isAuthenticated();
+      const authenticated = await mindflow.auth.isAuthenticated();
       setIsAuthenticated(authenticated);
       if (authenticated) {
-        const user = await base44.auth.me();
+        const user = await mindflow.auth.me();
         const userType = user.user_type || user.role;
         if (userType === 'admin') {
           navigate(createPageUrl("AdminDashboard"));
@@ -54,7 +54,7 @@ export default function LandingPage() {
   };
 
   const handleLogin = () => {
-    base44.auth.redirectToLogin();
+    mindflow.auth.redirectToLogin();
   };
 
   if (loading) {
